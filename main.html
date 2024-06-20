@@ -1,16 +1,495 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-
 <body>
+ 
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Call Log</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  </head>
+  <body>
+      <div class="container">
+          <h1>CALL LOG</h1>
+          <div class="filter">
+              <div class="select">
+                  <label for="status-filter">Status</label>
+                  <select id="status-filter">
+                      <option value="All">All</option>
+                      <option value="Answer">Success</option>
+                      <option value="Miss call">Miss call</option>
+                  </select>
+              </div>
+              <div class="search-container">
+                <input type="text" id="search" placeholder="Search">
+                <i class="fas fa-search"></i>
+            </div>
+          </div>
+          
+          <table>
+              <thead>
+                  <tr>
+                      <th>Caller Number</th>
+                      <th>Caller Name</th>
+                      <th>Callee Name</th>
+                      <th>Start Time</th>
+                      <th>End Time</th>
+                      <th>Call Duration</th>
+                      <th>Audio Record</th>
+                      <th>Transcription</th>
+                      <th>Sentiment</th>
+                      <th>Call Status</th>
+                      <th>Caller Id</th>
+                  </tr>
+              </thead>
+              <tbody id="content">
+              </tbody>
+          </table>
 
-    <script src="https://nodered.vncluster.infodation.com/api/getScript2" data-target=""
-        data-token="eyJhbGciOiJSUzI1NiIsImtpZCI6IjYwNUVCMzFEMzBBMjBEQkRBNTMxODU2MkM4QTM2RDFCMzIyMkE2MTkiLCJ4NXQiOiJZRjZ6SFRDaURiMmxNWVZpeUtOdEd6SWlwaGsiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjNiMDIwMzA4LTNjMzItNDdjZC04YWU2LTQ1MzM4NzRiOTRmNl8wMDAwMDAyMC0wZmJmLTU0MDgtMDJjMy01OTNhMGQwMDBhN2EiLCJzY3AiOjE3OTIsImNzaSI6IjE3MTcwMzkyMjEiLCJleHAiOjE3MTcxMjU2MjEsInJnbiI6ImFtZXIiLCJhY3NTY29wZSI6InZvaXAiLCJyZXNvdXJjZUlkIjoiM2IwMjAzMDgtM2MzMi00N2NkLThhZTYtNDUzMzg3NGI5NGY2IiwicmVzb3VyY2VMb2NhdGlvbiI6InVuaXRlZHN0YXRlcyIsImlhdCI6MTcxNzAzOTIyMX0.dWxYTGOp9402Wr8M7LstSVf1DTCM3uBVCy3EqRrT9ukatispSSn3ej4IVniaySPR3SqiUI5rfzhpsOldGivJbGl4Mxxr2gZnbLHwySuPJEqnDq2G_zDOEku8drG3ofGTmxVga6HDgGI_C5H6GzE7Zd5lQxF_15ZJFk3ZaUlXjGpwKFsEKp9IYmDtUNFRPQ1ol7LBmleOMvwzBgxosIdAlvnOyzGkNJxfqH9LVt2AqfnjPMOxxzDtRFDCP-4TdGWJGnfjqn8ENJW8FqlISqH34kzwAa48EfXAwlymFiSG6MGuAfo2F8QvTHAxeUW0PmnGQ0VFsr6AJB1H_X2VmdEs1g"></script>
+      </div>
+
+      <div id="popup" style="display:none; position:fixed; top:20%; left:20%; width:60%; height:50%; background-color:white; border:2px solid black; padding:10px; overflow:auto;">
+        <span id="closePopup" style="cursor:pointer; float:right; margin-right:5px;">&times;</span>
+        <div id="popupContent"></div>
+      </div>
+
+  </body>
+  </html>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+  
+    .container {
+      width: 90%;
+      margin: 20px auto;
+      height: 80%;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+  
+    h1 {
+      text-align: left;
+      margin-bottom: 20px;
+      padding-left: 30px;
+    }
+  
+    .filter {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
+  
+    #status-filter,
+    #search,
+    .select select {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  
+    .filter #search:focus {
+      outline: none;
+      border-color: #c4a699;
+    }
+  
+    .select {
+      margin-right: 80px;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      width: 240px;
+    }
+  
+    .select select {
+      width: 50%;
+    }
+  
+    audio {
+      width: 100%;
+    }
+  
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      table-layout: fixed;
+    }
+  
+    table,
+    th,
+    td {
+      border: none;
+      padding: 3px 12px;
+      text-align: left;
+    }
+    th {
+    vertical-align: top;
+  }
+    th {
+      color: #999;
+      padding-bottom: 10px;
+      text-align: left;
+      line-height: 1.2;
+      font-weight: bold;
+      border-bottom: 1px solid #cccccc;
+    }
+    tbody > tr:first-child > td{
+      padding-top: 10px;
+    }
+  
+    tbody {
+      max-height: 600px;
+      overflow-y: auto;
+      display: block;
+      height: 85%;
+      overflow: auto;
+    }
+  
+    tbody tr td:first-child {
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+  
+    tbody tr td:last-child {
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+      color: #798bab;
+    }
+  
+    tbody tr td {
+      color: #1a1a1a;
+      font-size: 15px;
+    }
+  
+    tbody tr:nth-child(even) {
+      background-color: #e6e6e6;
+    }
+  
+    tbody tr:hover {
+      background-color: #f1f1f1;
+    }
+  
+    .Answer {
+      color: #0c0;
+    }
+  
+    .MissCall {
+      color: #f33;
+    }
+  
+
+  
+    thead,
+    tbody tr {
+      display: table;
+      width: calc(100% - 1em);
+      table-layout: fixed;
+    }
+  
+    thead {
+      width: calc(100% - 1em)
+    }
+  
+    #closePopup {
+      cursor: pointer;
+      float: right;
+      margin-right: 5px;
+      font-size: 40px;
+      font-weight: bold;
+      color: #333;
+      padding: 0 10px;
+      line-height: 20px;
+    }
+  
+    #closePopup:hover {
+      color: #f00;
+  
+    }
+  
+    .sentiment-bar {
+      display: flex;
+      width: 100%;
+      height: 10px;
+    }
+    .positive,
+    .negative,
+    .neutral {
+      width: calc(var(--i) * 100%);
+    }
+  
+    .positive {
+      background-color: #28a745;
+    }
+  
+    .negative {
+      background-color: #f33;
+    }
+  
+    .neutral {
+      background-color: #f7d014;
+    }
+    
+    .positive:hover {
+  background-color: #3fc957; 
+}
+
+.negative:hover {
+  background-color: #ff6666; 
+}
+
+.neutral:hover {
+  background-color: #f7e36d; 
+}
+    .sentiment-bar>div {
+      position: relative;
+      width: calc(var(--i) * 100%);
+    }
+  
+    .sentiment-bar>div>span {
+      position: absolute;
+      display: none;
+      top: -100%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: black;
+      font-size: 10px;
+    }
+    .sentiment-bar>div:hover>span {
+      display: block;
+    }
+
+  .sentiment-bar > .positive{
+  border-top-left-radius: 4px; 
+  border-bottom-left-radius: 4px; 
+  }
+
+  .sentiment-bar > .negative{
+    border-top-right-radius: 4px; 
+    border-bottom-right-radius: 4px;
+  }
+  .myAudio{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: -20px;
+  }
+  .search-container {
+  position: relative;
+  display: inline-block;
+}
+
+#search {
+  padding: 10px;
+  padding-right: 40px; /* Để chừa chỗ cho icon */
+  font-size: 16px;
+}
+
+.search-container i {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+.audio-controls.hidden {
+    display: none;
+}
+
+.audio-player {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+  </style>
+  <script>
+
+var data = [
+    {
+        callerId: 'ffcea68a-20e2-49b7-94e3-36',
+        callerNumber: '+31627465384',
+        customerName: 'Jan Bouw',
+        CalleeName : "reseller A",
+        timeStart: '06/23/2024 10:30:05',
+        timeEnd: '06/23/2024 10:45:02',
+        duration: '00:14:57',
+        audioRecord: 'https://haitest365.blob.core.windows.net/acs1/Record-22453757-81d6-48e9-9a92-ad93ac51ad14.wav',
+        transcription: 'https://haitest365.blob.core.windows.net/acs1/trans/Record-22453757-81d6-48e9-9a92-ad93ac51ad14.wav.txt',
+        status: 'Answer',
+        sentiment: {
+          positive : 0.5,
+          neutral : 0.1,
+          negative : 0.4
+          
+        }
+    },
+    {
+        callerId: 'ascea68a-20e2-49b7-94e3-34',
+        callerNumber: '+31627465368',
+        customerName: '',
+        CalleeName : "reseller A",
+        timeStart: '06/23/2024 09:01:05',
+        timeEnd: '06/23/2024 09:10:02',
+        duration: '00:08:57',
+        audioRecord: 'https://haitest365.blob.core.windows.net/acs1/Record-22453757-81d6-48e9-9a92-ad93ac51ad14.wav',
+        transcription: 'https://haitest365.blob.core.windows.net/acs1/trans/Record-22453757-81d6-48e9-9a92-ad93ac51ad14.wav.txt',
+        status: 'Miss call',
+        sentiment: {
+          positive : 0.9,
+          neutral : 0,
+          negative : 0.1
+          
+        }
+    }
+  ];
+  const table = document.getElementById('content');
+
+  (()=> {
+    updateTable(data);
+  })();
+  
+
+    const statusFilter = document.getElementById('status-filter');
+    const search = document.getElementById('search');
+    statusFilter.addEventListener('change', () => {
+      const status = statusFilter.value.toLowerCase();
+      const filteredData = data.filter(row => status === 'all' || row.status.toLowerCase() === status);
+      updateTable(filteredData);
+    });
+
+
+    search.addEventListener('input', () => {
+        const keyword = search.value.toLowerCase();
+        let filteredData;
+
+        if (keyword === "#") {
+          filteredData = data.filter(row => row.customerName === '');
+        } else {
+          filteredData = data.filter(row => {
+            return row.callerNumber.toLowerCase().includes(keyword) ||
+              row.customerName.toLowerCase().includes(keyword);
+          });
+        }
+
+        updateTable(filteredData);
+      });
+      document.getElementById('closePopup').addEventListener('click', function () {
+        console.log('close');
+          document.getElementById('popup').style.display = 'none';
+        });
+
+        
+    function AddTxt()
+    {
+      const txtLink = document.querySelectorAll('.txtLink');
+      txtLink.forEach((link) => {
+        link.addEventListener('click', function (e)  {
+          e.preventDefault();
+          const url = this.getAttribute('href');
+          console.log(url);
+          fetch(url)
+            .then(response => response.text())
+            .then(data => {
+              document.getElementById('popupContent').innerText = data;
+              document.getElementById('popup').style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+        });
+      });
+
+    }
+
+    function AudioRecord()
+    {
+      const audioElements = document.getElementsByClassName('myAudio');
+        Array.from(audioElements).forEach((audioElement) => {
+          audioElement.addEventListener('play', function () {
+            this.style.width = '200%';
+          });
+
+          const resizeToOriginal = () => {
+            audioElement.style.width = '100%';
+          };
+
+          audioElement.addEventListener('pause', resizeToOriginal);
+          audioElement.addEventListener('ended', resizeToOriginal);
+        });
+    }   
+
+    function updateTable(filteredData) {
+      const createSpan = (sentimentValue) => {
+          if (sentimentValue == 0) {
+            return '';
+          } else {
+            return `<span>${sentimentValue * 100}%</span>`;
+          }
+        }
+      const statusMap =  {
+        'Answer': 'Answer',
+        'Miss call': 'MissCall'
+      };
+
+      table.innerHTML = ''; // Xóa dữ liệu hiện tại trên bảng
+      filteredData.forEach(row => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+              <td>${row.callerNumber}</td>
+              <td>${row.customerName}</td>
+              <td>${row.CalleeName}</td>
+              <td>${row.timeStart}</td>
+              <td>${row.timeEnd}</td>
+              <td>${row.duration}</td>
+              <td>
+              <audio controls class="myAudio">
+                <source src="${row.audioRecord}" type="audio/wav">
+              </td>
+
+              <td>
+                <a href="${row.transcription}"  class="txtLink"> Click To Open </a>
+              </td>
+              <td>
+                  <div class="sentiment-bar">
+                    <div style="--i:${row.sentiment.positive}" class="positive">
+                      ${createSpan(row.sentiment.positive)}
+                    </div>
+                    <div  style="--i:${row.sentiment.neutral}"class="neutral">
+                      ${createSpan(row.sentiment.neutral)}
+                    </div>
+                    <div style="--i:${row.sentiment.negative}" class="negative">
+                      ${createSpan(row.sentiment.negative)}
+                      </div>
+                  </div>
+              </td>
+              <td class="${statusMap[row.status]}">${row.status}</td>
+              <td class="truncate" title="${row.callerId}">${row.callerId}</td>
+          `;
+          table.appendChild(tr);
+      });
+    AddTxt();
+    AudioRecord();
+}
+
+
+</script>
 </body>
-
 </html>
