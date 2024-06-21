@@ -378,7 +378,6 @@
     const search = document.getElementById('search');
     statusFilter.addEventListener('change', () => {
       const status = statusFilter.value.toLowerCase();
-      console.log(data);
       const filteredData = data.filter(row => status === 'all' || row.status.toLowerCase() === status);
       updateTable(filteredData);
     });
