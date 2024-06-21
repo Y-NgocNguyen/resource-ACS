@@ -329,7 +329,19 @@
       const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} UTC`;
       return formattedDate;
     }
-    
+
+    const GetHours = (duration) => {
+      const date = new Date(duration);
+      const minutes = date.getUTCMinutes();
+      const seconds = date.getUTCSeconds();
+      const result = `${minutes}p : ${seconds}s`;
+      if(minutes == 0)
+      {
+        return `${seconds}s`;
+      }
+      return result;
+    }
+
       try {
         var getDate = await fetch('https://nodered.vncluster.infodation.com/api/getCallLog');
         var data = await getDate.json();
@@ -342,7 +354,7 @@
             calleeName: i.calleeName,
             startTime: formatDate(i.startTime),
             endTime: i.endTime,
-            duration: i.duration,
+            duration: GetHours(i.duration),
             audioRecord: i.audioRecord,
             transcription: i.transcription,
             sentiment: {
@@ -404,7 +416,14 @@
               });
             });
           }
-
+    
+    function BorderRadius()
+    {
+      const sentiment = document.getElementsByClassName('sentiment-bar');
+      Array.from(sentiment).forEach((sentiment) => {
+        console.log(sentiment);
+      });
+    }
     function AudioRecord()
     {
       const audioElements = document.getElementsByClassName('myAudio');
@@ -472,6 +491,7 @@
           `;
           table.appendChild(tr);
       });
+    BorderRadius();
     AddTxt();
     AudioRecord();
 }
