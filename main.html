@@ -78,6 +78,7 @@
     .container {
       width: 100%;
       margin: 20px auto;
+      overflow: hidden;
       margin-top: 0;
       height: 94%;
       background: #fff;
@@ -162,10 +163,9 @@
   
     tbody {
       max-height: 600px;
-      overflow-y: auto;
       display: block;
       height: 85%;
-      overflow: auto;
+      overflow-y: auto;
     }
   
     tbody tr td:first-child {
@@ -381,7 +381,6 @@
       updateTable(filteredData);
     });
 
-
     search.addEventListener('input', () => {
         const keyword = search.value.toLowerCase();
         let filteredData;
@@ -421,6 +420,7 @@
     {
       const sentiment = document.getElementsByClassName('sentiment-bar');
       Array.from(sentiment).forEach((sentiment) => {
+        //const iValue = getComputedStyle(sentiment)
         console.log(sentiment);
       });
     }
