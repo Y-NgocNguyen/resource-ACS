@@ -322,16 +322,25 @@
       try {
         var getDate = await fetch("https://nodered.vncluster.infodation.com/api/getCallLog");
         var result = await getDate.json();
+
+        var customerNames = await fetch("https://nodered.vncluster.infodation.com/api/getCustomer");
+        var customerResult = await customerNames.json();
+        var cusFilter = customerResult.filter((customer) => customer.name !== '' && customer.phone !== '' && customer.phone !== "11111111111" );
+        const customerMap = cusFilter.reduce((map, customer) => {
+          map.set(customer.phone,  customer.name);
+          return map;
+        }, new Map());
+
         let dataProcess = result.map(i => {
           const sentiment = JSON.parse(i.sentiment); 
           return {
             callerId: i.callerId,
             callerNumber: i.callerNumber,
-            callerName: i.callerName,
-            calleeName: i.calleeName,
+            callerName: customerMap[i.callerNumber] ?? '',
+            calleeName: i.calleeName == '8:acs:3b020308-3c32-47cd-8ae6-4533874b94f6_00000020-0fbf-5408-02c3-593a0d000a7a' ? 'Admin Kikker' : '',
             startTime: formatDate(i.startTime),
             endTime: formatDate(i.endTime),
-            duration: i.duration,
+            duration: i.duration ?? '',
             audioRecord: i.audioRecord,
             transcription: i.transcription,
             sentiment: {
