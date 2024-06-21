@@ -334,7 +334,7 @@
         let dataProcess = result.map(i => {
           const sentiment = JSON.parse(i.sentiment); 
           return {
-            callerId: i.callerId,
+            callerId: i.callerId ?? '',
             callerNumber: i.callerNumber,
             callerName: customerMap.get(i.callerNumber) ?? '',
             calleeName: i.calleeName == '8:acs:3b020308-3c32-47cd-8ae6-4533874b94f6_00000020-0fbf-5408-02c3-593a0d000a7a' ? 'Admin Kikker' : resellerMap.get(i.calleeName?.substring(2) ?? '') ?? '',
