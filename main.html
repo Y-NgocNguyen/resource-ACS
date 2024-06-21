@@ -336,11 +336,6 @@
 
         const customerMap = await fetchAndProcessCustomers("https://nodered.vncluster.infodation.com/api/getCustomer");
         const resellerMap = await fetchAndProcessCustomers("https://nodered.vncluster.infodation.com/api/getReseller");
-
-        console.log(resellerMap);
-
-        console.log(customerMap);
-
         let dataProcess = result.map(i => {
           const sentiment = JSON.parse(i.sentiment); 
           return {
@@ -429,7 +424,7 @@
               link.addEventListener('click', function (e) {
                 e.preventDefault();
                 const data = this.getAttribute('data-content');
-                document.getElementById('popupContent').innerText = data;
+                document.getElementById('popupContent').innerText = data == 'null' ? '' : data;
                 document.getElementById('popup').style.display = 'block';
                 document.getElementById('overlay').style.display = 'block'; 
                
