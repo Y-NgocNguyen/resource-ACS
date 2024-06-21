@@ -330,8 +330,8 @@
             callerName: i.callerName,
             calleeName: i.calleeName,
             startTime: formatDate(i.startTime),
-            endTime: i.endTime,
-            duration: GetHours(i.duration),
+            endTime: formatDate(i.endTime),
+            duration: i.duration,
             audioRecord: i.audioRecord,
             transcription: i.transcription,
             sentiment: {
@@ -360,18 +360,7 @@
       return formattedDate;
     }
 
-    const GetHours = (duration) => {
-      const date = new Date(duration);
-      const minutes = date.getUTCMinutes();
-      const seconds = date.getUTCSeconds();
-      const result = `${minutes}m : ${seconds}s`;
-      if(minutes == 0)
-      {
-        return `${seconds}s`;
-      }
-      return result;
-    }
-  
+
 
     const statusFilter = document.getElementById('status-filter');
     const search = document.getElementById('search');
