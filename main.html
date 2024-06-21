@@ -276,7 +276,8 @@
     }
     .myAudio:hover {
       cursor: pointer;
-      width: 200%;
+      transform: translateX(-40%);
+      width: 350%;
     }
     
   
@@ -462,11 +463,13 @@
       const audioElements = document.getElementsByClassName('myAudio');
         Array.from(audioElements).forEach((audioElement) => {
           audioElement.addEventListener('play', function () {
-            this.style.width = '200%';
+            this.style.width = '350%';
+            this.style.transform = 'translateX(-40%)';
           });
 
           const resizeToOriginal = () => {
             audioElement.style.width = '100%';
+            audioElement.style.transform = 'none';
           };
 
           audioElement.addEventListener('pause', resizeToOriginal);
