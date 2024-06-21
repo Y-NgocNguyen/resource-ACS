@@ -318,12 +318,16 @@
   const table = document.getElementById('content');
   let data = [];
   const statusMap =  {
-        'Answer': 'Answer',
-        'Miss call': 'MissCall'
+        'Answer': 'Answer', // 1
+        'Miss call': 'MissCall', // 3
+        'Caller Hangup': 'CallHp',  // 2
+        'other': "other"//0
       };
   const statusMap2 = {
         0: 'Miss call',
-        1: 'Answer'
+        1: 'Answer',
+        2: 'Miss call',
+        3 : 'Miss call',
       };
 
   (async () => {
@@ -406,7 +410,9 @@
         } else {
           filteredData = data.filter(row => {
             return row.callerNumber.toLowerCase().includes(keyword) ||
-              row.callerName.toLowerCase().includes(keyword);
+              row.callerName.toLowerCase().includes(keyword) || 
+              row.calleeName.toLowerCase().includes(keyword) ||
+              row.callerId.toLowerCase().includes(keyword) ;
           });
         }
         updateTable(filteredData);
