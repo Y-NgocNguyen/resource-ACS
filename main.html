@@ -317,27 +317,10 @@
 
   const table = document.getElementById('content');
   let data = [];
-
-  async function fetchData(url) {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    try {
-      const result = await response.json();
-      console.log(result);
-    } catch (jsonError) {
-      throw new Error('Error parsing JSON: ' + jsonError.message);
-    }
-  } catch (error) {
-    console.error('Fetch error:', error.message);
-  }
-}
   (async () => {
 
       try {
-        var getDate = await fetchData("https://nodered.vncluster.infodation.com/api/getCallLog");
+        var getDate = await fetch("https://nodered.vncluster.infodation.com/api/getCallLog");
         var result = await getDate.json();
         let dataProcess = result.map(i => {
           const sentiment = JSON.parse(i.sentiment); 
@@ -436,12 +419,20 @@
               const sentiments = document.getElementsByClassName('sentiment-bar');
               Array.from(sentiments).forEach((sentiment) => {
                 var children = sentiment.children;
-                Array.from(children).forEach((child) => {
+                const filteredChildren = Array.from(children).filter((child) => {
                   const style = window.getComputedStyle(child);
                   const iValue = style.getPropertyValue('--i').trim();
-                  
-                  
+                  return iValue !== '0';
                 });
+
+                if (filteredChildren.length > 0) {
+                  filteredChildren[0].style.borderTopLeftRadius = '4px';
+                  filteredChildren[0].style.borderBottomLeftRadius = '4px';
+
+                  const lastIndex = filteredChildren.length - 1;
+                  filteredChildren[lastIndex].style.borderTopRightRadius = '4px';
+                  filteredChildren[lastIndex].style.borderBottomRightRadius = '4px';
+                }
               });
             }
     function AudioRecord()
