@@ -95,7 +95,7 @@
     .filter {
       display: flex;
       justify-content: flex-end;
-      margin-bottom: 20px;
+      margin-bottom: 40px;
     }
   
     #status-filter,
@@ -267,17 +267,7 @@
     .sentiment-bar>div:hover>span {
       display: block;
     }
-  
-    .sentiment-bar>.positive {
-      border-top-left-radius: 4px;
-      border-bottom-left-radius: 4px;
-    }
-  
-    .sentiment-bar>.negative {
-      border-top-right-radius: 4px;
-      border-bottom-right-radius: 4px;
-    }
-  
+
     .myAudio {
       display: flex;
       justify-content: center;
@@ -298,7 +288,6 @@
     #search {
       padding: 10px;
       padding-right: 40px;
-      /* Để chừa chỗ cho icon */
       font-size: 16px;
     }
   
@@ -326,49 +315,38 @@
   </style>
   <script>
 
-var data = [
-    {
-        callerId: 'ffcea68a-20e2-49b7-94e3-36',
-        callerNumber: '+31627465384',
-        customerName: 'Jan Bouw',
-        CalleeName : "reseller A",
-        timeStart: '06/23/2024 10:30:05',
-        timeEnd: '06/23/2024 10:45:02',
-        duration: '00:14:57',
-        audioRecord: 'https://haitest365.blob.core.windows.net/acs1/Record-22453757-81d6-48e9-9a92-ad93ac51ad14.wav',
-        transcription: 'https://haitest365.blob.core.windows.net/acs1/trans/Record-22453757-81d6-48e9-9a92-ad93ac51ad14.wav.txt',
-        status: 'Answer',
-        sentiment: {
-          positive : 0.5,
-          neutral : 0.1,
-          negative : 0.4
-          
-        }
-    },
-    {
-        callerId: 'ascea68a-20e2-49b7-94e3-34',
-        callerNumber: '+31627465368',
-        customerName: '',
-        CalleeName : "reseller A",
-        timeStart: '06/23/2024 09:01:05',
-        timeEnd: '06/23/2024 09:10:02',
-        duration: '00:08:57',
-        audioRecord: 'https://haitest365.blob.core.windows.net/acs1/Record-22453757-81d6-48e9-9a92-ad93ac51ad14.wav',
-        transcription: 'https://haitest365.blob.core.windows.net/acs1/trans/Record-22453757-81d6-48e9-9a92-ad93ac51ad14.wav.txt',
-        status: 'Miss call',
-        sentiment: {
-          positive : 0.9,
-          neutral : 0,
-          negative : 0.1
-          
-        }
-    }
-  ];
   const table = document.getElementById('content');
 
-  (()=> {
-    updateTable(data);
-  })();
+  (async () => {
+      try {
+        var getDate = await fetch('https://nodered.vncluster.infodation.com/api/getCallLog');
+        var data = await getDate.json();
+        let dataProcess = data.map(i => {
+          const sentiment = JSON.parse(i.sentiment); 
+          return {
+            callerId: i.callerId,
+            callerNumber: i.callerNumber,
+            callerName: i.callerName,
+            calleeName: i.calleeName,
+            startTime: i.startTime,
+            endTime: i.endTime,
+            duration: i.duration,
+            audioRecord: i.audioRecord,
+            transcription: i.transcription,
+            sentiment: {
+              positive: parseFloat(sentiment.Positive.toFixed(2)), 
+              neutral: parseFloat(sentiment.Neutral.toFixed(2)),
+              negative: parseFloat(sentiment.Negative.toFixed(2))
+            },
+            status: i.status === 0 ? 'Miss call' : 'Answer',
+          };
+        });
+        updateTable(dataProcess);
+
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    })();
   
 
     const statusFilter = document.getElementById('status-filter');
@@ -401,21 +379,16 @@ var data = [
       document.getElementById('overlay').style.display = 'none'; 
     });
 
-        function AddTxt() {
+        function AddTxt()  {
             const txtLink = document.querySelectorAll('.txtLink');
             txtLink.forEach((link) => {
               link.addEventListener('click', function (e) {
                 e.preventDefault();
-                const url = this.getAttribute('href');
-                console.log(url);
-                fetch(url)
-                  .then(response => response.text())
-                  .then(data => {
-                    document.getElementById('popupContent').innerText = data;
-                    document.getElementById('popup').style.display = 'block';
-                    document.getElementById('overlay').style.display = 'block'; 
-                  })
-                  .catch(error => console.error('Error:', error));
+                const data = this.getAttribute('data-content');
+                document.getElementById('popupContent').innerText = data;
+                document.getElementById('popup').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block'; 
+               
               });
             });
           }
@@ -442,7 +415,7 @@ var data = [
           if (sentimentValue == 0) {
             return '';
           } else {
-            return `<span>${sentimentValue * 100}%</span>`;
+            return `<span>${(sentimentValue * 100).toFixed(2)}%</span>`;
           }
         }
       const statusMap =  {
@@ -455,10 +428,10 @@ var data = [
           const tr = document.createElement('tr');
           tr.innerHTML = `
               <td>${row.callerNumber}</td>
-              <td>${row.customerName}</td>
-              <td>${row.CalleeName}</td>
-              <td>${row.timeStart}</td>
-              <td>${row.timeEnd}</td>
+              <td>${row.callerName}</td>
+              <td>${row.calleeName}</td>
+              <td>${row.startTime}</td>
+              <td>${row.endTime}</td>
               <td>${row.duration}</td>
               <td>
               <audio controls class="myAudio">
@@ -467,7 +440,7 @@ var data = [
               </td>
 
               <td>
-                <a href="${row.transcription}"  class="txtLink"> Click To Open </a>
+                <a href="#" class="txtLink" data-content="${row.transcription}">Open File</a>
               </td>
               <td>
                   <div class="sentiment-bar">
