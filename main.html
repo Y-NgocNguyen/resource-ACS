@@ -316,8 +316,39 @@
   <script>
 
   const table = document.getElementById('content');
-
+  let data = [];
   (async () => {
+
+      try {
+        var getDate = await fetch('https://nodered.vncluster.infodation.com/api/getCallLog');
+        var result = await getDate.json();
+        let dataProcess = result.map(i => {
+          const sentiment = JSON.parse(i.sentiment); 
+          return {
+            callerId: i.callerId,
+            callerNumber: i.callerNumber,
+            callerName: i.callerName,
+            calleeName: i.calleeName,
+            startTime: formatDate(i.startTime),
+            endTime: i.endTime,
+            duration: GetHours(i.duration),
+            audioRecord: i.audioRecord,
+            transcription: i.transcription,
+            sentiment: {
+              positive: parseFloat(sentiment?.Positive?.toFixed(2) ?? 0), 
+              neutral: parseFloat(sentiment?.Neutral?.toFixed(2) ?? 0),
+              negative: parseFloat(sentiment?.Negative?.toFixed(2)?? 0)
+            },
+            status: i.status === 0 ? 'Miss call' : 'Answer',
+          };
+        });
+        data = dataProcess;
+        updateTable(dataProcess);
+
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    })();
 
     const formatDate = (startTime) => {
       const date = new Date(startTime);
@@ -341,42 +372,13 @@
       }
       return result;
     }
-
-      try {
-        var getDate = await fetch('https://nodered.vncluster.infodation.com/api/getCallLog');
-        var data = await getDate.json();
-        let dataProcess = data.map(i => {
-          const sentiment = JSON.parse(i.sentiment); 
-          return {
-            callerId: i.callerId,
-            callerNumber: i.callerNumber,
-            callerName: i.callerName,
-            calleeName: i.calleeName,
-            startTime: formatDate(i.startTime),
-            endTime: i.endTime,
-            duration: GetHours(i.duration),
-            audioRecord: i.audioRecord,
-            transcription: i.transcription,
-            sentiment: {
-              positive: parseFloat(sentiment.Positive.toFixed(2)), 
-              neutral: parseFloat(sentiment.Neutral.toFixed(2)),
-              negative: parseFloat(sentiment.Negative.toFixed(2))
-            },
-            status: i.status === 0 ? 'Miss call' : 'Answer',
-          };
-        });
-        updateTable(dataProcess);
-
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    })();
   
 
     const statusFilter = document.getElementById('status-filter');
     const search = document.getElementById('search');
     statusFilter.addEventListener('change', () => {
       const status = statusFilter.value.toLowerCase();
+      console.log(data);
       const filteredData = data.filter(row => status === 'all' || row.status.toLowerCase() === status);
       updateTable(filteredData);
     });
@@ -393,7 +395,6 @@
               row.customerName.toLowerCase().includes(keyword);
           });
         }
-
         updateTable(filteredData);
       });
 
@@ -416,14 +417,18 @@
             });
           }
     
-    // function BorderRadius()
-    // {
-    //   const sentiments = document.getElementsByClassName('sentiment-bar');
-    //   Array.from(sentiments).forEach((sentiment) => {
-    //     var children = sentiment.children.filter((child) => child.etPropertyValue('--i'));
-    //     console.log(children);
-    //   });
-    // }
+          function BorderRadius() {
+              const sentiments = document.getElementsByClassName('sentiment-bar');
+              Array.from(sentiments).forEach((sentiment) => {
+                var children = sentiment.children;
+                Array.from(children).forEach((child) => {
+                  const style = window.getComputedStyle(child);
+                  const iValue = style.getPropertyValue('--i').trim();
+                  
+                  
+                });
+              });
+            }
     function AudioRecord()
     {
       const audioElements = document.getElementsByClassName('myAudio');
@@ -491,7 +496,7 @@
           `;
           table.appendChild(tr);
       });
-    // BorderRadius();
+    BorderRadius();
     AddTxt();
     AudioRecord();
 }
