@@ -317,6 +317,16 @@
 
   const table = document.getElementById('content');
   let data = [];
+  const statusMap =  {
+        'Answer': 'Answer',
+        'Miss call': 'MissCall'
+      };
+  const statusMap2 = {
+        0: 'Miss call',
+        1: 'Answer'
+      };
+
+    window.onload =
   (async () => {
 
       try {
@@ -348,7 +358,7 @@
               neutral: parseFloat(sentiment?.Neutral?.toFixed(2) ?? 0),
               negative: parseFloat(sentiment?.Negative?.toFixed(2)?? 0)
             },
-            status: i.status === 0 ? 'Miss call' : 'Answer',
+            status: statusMap2[i.status],
           };
         });
         data = dataProcess;
@@ -377,6 +387,9 @@
       const hours = date.getUTCHours();
       const minutes = date.getUTCMinutes();
       const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} UTC`;
+      if(year === 1970) {
+        return '';
+      }
       return formattedDate;
     }
 
@@ -469,11 +482,6 @@
             return `<span>${(sentimentValue * 100).toFixed(2)}%</span>`;
           }
         }
-      const statusMap =  {
-        'Answer': 'Answer',
-        'Miss call': 'MissCall'
-      };
-
       table.innerHTML = ''; // Xóa dữ liệu hiện tại trên bảng
       filteredData.forEach(row => {
           const tr = document.createElement('tr');
