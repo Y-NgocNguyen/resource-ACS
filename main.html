@@ -284,6 +284,11 @@
       align-items: center;
       padding: -20px;
     }
+    .myAudio:hover {
+      cursor: pointer;
+      width: 200%;
+    }
+    
   
     .search-container {
       position: relative;
@@ -454,6 +459,7 @@ var data = [
               <td>
               <audio controls class="myAudio">
                 <source src="${row.audioRecord}" type="audio/wav">
+              </audio>
               </td>
 
               <td>
