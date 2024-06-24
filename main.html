@@ -309,6 +309,9 @@
         border-color: #0056b3;
         box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
       }
+      #sum-record{
+        font-style: italic;
+      }
 
       @keyframes spin {
         0% {
@@ -363,6 +366,7 @@
         <button id="prev-page">Prev</button>
         <input type="number" id="goto-page" placeholder="Go to page..." min="1" style="margin: 0 10px; width: 80px;">
         <span id="pagination-info">1/1</span>
+        <span id="sum-record"></span>
         <button id="next-page">Next</button>
       </div>
 
@@ -566,6 +570,7 @@
                 status: applyStatusClass2(i.status),
               }
             });
+            document.getElementById('sum-record').textContent = `Total records: ${processedData.length}`;
             paginationInit(processedData,true);
           } catch (error) {
             console.error('Error:', error);
@@ -653,6 +658,7 @@
           paginationInit(dataTemp);
         }
         await fetchDataAndUpdateTable();
+        
       }
 
       await updateUI();
