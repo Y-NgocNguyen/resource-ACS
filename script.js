@@ -17,8 +17,8 @@ const statusMap2 = {
 (async () => {
 
     try {
-        var getDate = await fetch("https://nodered.vncluster.infodation.com/api/getCallLog");
-        var result = await getDate.json();
+        let getDate = await fetch("https://nodered.vncluster.infodation.com/api/getCallLog");
+        let result = await getDate.json();
 
 
         const customerMap = await fetchAndProcessCustomers("https://nodered.vncluster.infodation.com/api/getCustomer");
