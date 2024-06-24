@@ -96,10 +96,8 @@ tbody>tr:first-child>td {
 }
 
 tbody {
-    max-height: 600px;
     display: block;
-    height: 85%;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 tbody tr td:first-child {
@@ -250,3 +248,43 @@ thead {
     text-decoration: none;
     font-style: italic;
 }
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .pagination button {
+    padding: 5px 10px;
+    margin: 0 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .pagination button:hover {
+    background-color: #0056b3;
+  }
+  
+  .pagination span {
+    margin: 0 10px;
+  }
+  .pagination input[type="number"] {
+    padding: 4px 10px;
+    margin: 0 5px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    color: #007bff;
+    background-color: white;
+    width: 60px; /* Adjust width as needed */
+  }
+  
+  .pagination input[type="number"]:focus {
+    outline: none;
+    border-color: #0056b3;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
