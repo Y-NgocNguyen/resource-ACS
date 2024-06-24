@@ -393,6 +393,8 @@
   <script>
     (async function () {
       let maxRows = 8;
+      let currentPage = 1;
+      let totalPages;
       const utils = {
         formatDate(startTime) {
           const date = new Date(startTime);
@@ -489,10 +491,6 @@
         }
 
         function updateTable(filteredData) {
-          var container = document.getElementsByClassName("container");
-          if (container[0].clientHeight < 640) {
-            maxRows = 4;
-          }
           const table = document.getElementById('content');
           table.innerHTML = '';
           filteredData.forEach(row => {
@@ -578,13 +576,15 @@
         }
         function paginationInit(data,init) {
          
+          var container = document.getElementsByClassName("container");
+          if (container[0].clientHeight < 640) {
+            maxRows = 4;
+          }
           const prevButton = document.getElementById("prev-page");
           const nextButton = document.getElementById("next-page");
           const pageInfo = document.getElementById("pagination-info");
           const gotoPageInput = document.getElementById("goto-page");
-          let currentPage = 1;
-          let totalPages = Math.ceil(data.length / maxRows);
-
+          totalPages = Math.ceil(data.length / maxRows);
           // Update the pagination info text
           const updatePageInfo = () => {
             pageInfo.textContent = `${currentPage}/${totalPages}`;
@@ -609,12 +609,6 @@
               }
             }
           });
-          // document.addEventListener("keyup", (event) => {
-          //   if (event.key === "Escape") {
-              
-          //   }
-          // })
-            
             nextButton.addEventListener("click", () => {
               if (currentPage < totalPages) {
                 loadDataForPage(currentPage + 1);
@@ -642,6 +636,7 @@
         };
 
         function filterAndSearchTable() {
+          currentPage = 1;
           const statusFilter = document.getElementById('status-filter');
           const status = statusFilter.value.toLowerCase();
           const search = document.getElementById('search');
