@@ -143,6 +143,7 @@
         });
         let processedData = [];
         async function fetchDataAndUpdateTable() {
+            document.getElementById('overlay').style.display = 'block';
             try {
                 const [callLogData, customerMap, resellerMap] = await Promise.all([
                     fetch("https://nodered.vncluster.infodation.com/api/getCallLog").then(res => res.json()),
@@ -173,6 +174,9 @@
             } catch (error) {
                 console.error('Error:', error);
             }
+            finally{
+                document.getElementById('overlay').style.display = 'none';
+            }
         }
         function paginationInit() {
             const prevButton = document.getElementById("prev-page");
@@ -187,14 +191,11 @@
             // Update the pagination info text
             const updatePageInfo = () => {
                 pageInfo.textContent = `${currentPage}/${totalPages}`;
+                updateTable(processedData.slice((currentPage - 1) * 8, currentPage * 8));
             };
 
-            // Load data for a specific page
             const loadDataForPage = (page) => {
                 currentPage = page;
-                // Here you should load your data based on the currentPage
-                // For example: processedData(currentPage);
-                // After loading your data, update the total pages if necessary and the page info
                 updatePageInfo();
             };
 
@@ -205,7 +206,6 @@
                 }
             });
 
-            // Next page button click event
             nextButton.addEventListener("click", () => {
                 if (currentPage < totalPages) {
                     loadDataForPage(currentPage + 1);
@@ -221,8 +221,6 @@
                     gotoPageInput.value = currentPage; // Reset to current page if invalid
                 }
             });
-
-            // Initial data load
             loadDataForPage(currentPage);
         };
         

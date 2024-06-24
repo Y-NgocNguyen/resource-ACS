@@ -288,3 +288,7 @@ thead {
     border-color: #0056b3;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
   }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
