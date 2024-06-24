@@ -17,7 +17,312 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Call Log</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .container {
+        width: 100%;
+        margin: 20px auto;
+        overflow: hidden;
+        margin-top: 0;
+        height: 88%;
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+
+      h1 {
+        text-align: left;
+        margin-bottom: 20px;
+        padding-left: 30px;
+      }
+
+      .filter {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 40px;
+      }
+
+      #status-filter,
+      #search,
+      .select select {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .filter #search:focus {
+        outline: none;
+        border-color: #c4a699;
+      }
+
+      .select {
+        margin-right: 80px;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        width: 240px;
+      }
+
+      .select select {
+        width: 50%;
+      }
+
+      audio {
+        width: 100%;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        table-layout: fixed;
+      }
+
+      table,
+      th,
+      td {
+        border: none;
+        padding: 3px 12px;
+        text-align: left;
+      }
+
+      th {
+        vertical-align: top;
+      }
+
+      th {
+        color: #999;
+        padding-bottom: 10px;
+        text-align: left;
+        line-height: 1.2;
+        font-weight: bold;
+        border-bottom: 1px solid #cccccc;
+      }
+
+      tbody>tr:first-child>td {
+        padding-top: 10px;
+      }
+
+      tbody {
+        display: block;
+        overflow-y: hidden;
+      }
+
+      tbody tr td:first-child {
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+      }
+
+      tbody tr td:last-child {
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        color: #798bab;
+      }
+
+      tbody tr td {
+        color: #1a1a1a;
+        font-size: 15px;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #e6e6e6;
+      }
+
+      tbody tr:hover {
+        background-color: #f1f1f1;
+      }
+
+      .Answer {
+        color: #0c0;
+      }
+
+      .MissCall {
+        color: #f33;
+      }
+
+
+
+      thead,
+      tbody tr {
+        display: table;
+        width: calc(100% - 1em);
+        table-layout: fixed;
+      }
+
+      thead {
+        width: calc(100% - 1em)
+      }
+
+      .sentiment-bar {
+        display: flex;
+        width: 100%;
+        height: 10px;
+      }
+
+      .positive,
+      .negative,
+      .neutral {
+        width: calc(var(--i) * 100%);
+      }
+
+      .positive {
+        background: #28a745;
+      }
+
+      .negative {
+        background: #ff3333;
+      }
+
+      .neutral {
+        background: #f7d014;
+      }
+
+      .positive:hover {
+        background-color: #3fc957;
+      }
+
+      .negative:hover {
+        background-color: #ff6666;
+      }
+
+      .neutral:hover {
+        background-color: #f7e36d;
+      }
+
+      .sentiment-bar>div {
+        position: relative;
+        width: calc(var(--i) * 100%);
+      }
+
+      .sentiment-bar>div>span {
+        position: absolute;
+        display: none;
+        top: -100%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: black;
+        font-size: 10px;
+      }
+
+      .sentiment-bar>div:hover>span {
+        display: block;
+      }
+
+      .myAudio {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: -20px;
+        transition: transform 0.5s ease, width 0.5s ease;
+      }
+
+      .myAudio:hover {
+        cursor: pointer;
+        transform: translateX(-40%);
+        width: 350%;
+      }
+
+
+      .search-container {
+        position: relative;
+        display: inline-block;
+      }
+
+      #search {
+        padding: 10px;
+        padding-right: 40px;
+        font-size: 16px;
+      }
+
+      .search-container i {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+      }
+
+      .audio-controls.hidden {
+        display: none;
+      }
+
+      .audio-player {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .txtLink {
+        text-decoration: none;
+        font-style: italic;
+      }
+
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      .pagination button {
+        padding: 5px 10px;
+        margin: 0 5px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .pagination button:hover {
+        background-color: #0056b3;
+      }
+
+      .pagination span {
+        margin: 0 10px;
+      }
+
+      .pagination input[type="number"] {
+        padding: 4px 10px;
+        margin: 0 5px;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        color: #007bff;
+        background-color: white;
+        width: 60px;
+        /* Adjust width as needed */
+      }
+
+      .pagination input[type="number"]:focus {
+        outline: none;
+        border-color: #0056b3;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
   </head>
 
   <body>
@@ -88,7 +393,265 @@
   </body>
 
   </html>
-  <script src="script.js"></script>
+  <!-- <script src="script.js"></script> -->
+  <script>
+    // IIFE to encapsulate the code
+    (async function () {
+      const utils = {
+        formatDate(startTime) {
+          const date = new Date(startTime);
+          if (date.getUTCFullYear() === 1970) return '';
+          return `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-${date.getUTCDate().toString().padStart(2, '0')} ${date.getUTCHours().toString().padStart(2, '0')}:${date.getUTCMinutes().toString().padStart(2, '0')} UTC`;
+        },
+        createSpan(sentimentValue) {
+          return sentimentValue === 0 ? '' : `<span>${(sentimentValue * 100).toFixed(2)}%</span>`;
+        }
+      };
+
+      async function fetchAndProcessCustomers(url) {
+        const response = await fetch(url);
+        const customers = await response.json();
+        return customers.reduce((map, customer) => {
+          if (customer.name && customer.phone && customer.phone !== "11111111111") {
+            map.set(customer.phone, customer.name);
+          }
+          return map;
+        }, new Map());
+      }
+
+      async function updateUI() {
+        const statusMap = {
+          'Answer': 'Answer', // 1
+          'Miss call': 'MissCall', // 3
+          'Caller Hangup': 'CallHp',  // 2
+          'other': "other"//0
+        };
+        const statusMap2 = {
+          0: 'Miss call',
+          1: 'Answer',
+          2: 'Miss call',
+          3: 'Miss call',
+        };
+        function applyStatusClass(status) {
+          const statusClass = statusMap[status] || 'MissCall';
+          return statusClass;
+        }
+        function applyStatusClass2(status) {
+          const statusClass = statusMap2[status] || 'MissCall';
+          return statusClass;
+        }
+
+        function setTbodyHeight() {
+          let tbody = document.querySelector("tbody");
+          let trs = tbody.getElementsByTagName("tr");
+          let totalHeight = 0;
+          let maxRows = 8;
+
+          for (let i = 0; i < trs.length && i < maxRows; i++) {
+            totalHeight += trs[i].clientHeight;
+          }
+
+          tbody.style.height = totalHeight + "px";
+        }
+
+        function addTxtListeners() {
+          document.querySelectorAll('.txtLink').forEach(link => {
+            link.addEventListener('click', function (e) {
+              e.preventDefault();
+              const data = this.getAttribute('data-content');
+              document.getElementById('popupContent').innerText = data === 'null' ? '' : data;
+              document.getElementById('popup').style.display = 'block';
+              document.getElementById('overlay').style.display = 'block';
+            });
+          });
+        }
+
+        function borderRadiusAdjustment() {
+          document.querySelectorAll('.sentiment-bar').forEach(sentiment => {
+            const children = Array.from(sentiment.children).filter(child => window.getComputedStyle(child).getPropertyValue('--i').trim() !== '0');
+            if (children.length > 0) {
+              children[0].style.borderTopLeftRadius = '4px';
+              children[0].style.borderBottomLeftRadius = '4px';
+              children[children.length - 1].style.borderTopRightRadius = '4px';
+              children[children.length - 1].style.borderBottomRightRadius = '4px';
+            }
+          });
+        }
+
+        function audioRecordAdjustment() {
+          document.querySelectorAll('.myAudio').forEach(audioElement => {
+            audioElement.addEventListener('play', function () {
+              this.style.width = '350%';
+              this.style.transform = 'translateX(-40%)';
+            });
+            const resizeToOriginal = () => {
+              audioElement.style.width = '100%';
+              audioElement.style.transform = 'none';
+            };
+            audioElement.addEventListener('pause', resizeToOriginal);
+            audioElement.addEventListener('ended', resizeToOriginal);
+          });
+        }
+
+        function updateTable(filteredData) {
+          const table = document.getElementById('content');
+          table.innerHTML = '';
+          filteredData.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                    <td>${row.callerNumber}</td>
+                    <td>${row.callerName}</td>
+                    <td>${row.calleeName}</td>
+                    <td>${utils.formatDate(row.startTime)}</td>
+                    <td>${utils.formatDate(row.endTime)}</td>
+                    <td>${row.duration}</td>
+                    <td>
+                        <audio controls class="myAudio">
+                            <source src="${row.audioRecord}" type="audio/wav">
+                        </audio>
+                    </td>
+                    <td>
+                        <a href="#" class="txtLink" data-content="${row.transcription}">Open File</a>
+                    </td>
+                    <td>
+                        <div class="sentiment-bar">
+                            <div style="--i:${row.sentiment.positive}" class="positive">${utils.createSpan(row.sentiment.positive)}</div>
+                            <div style="--i:${row.sentiment.neutral}" class="neutral">${utils.createSpan(row.sentiment.neutral)}</div>
+                            <div style="--i:${row.sentiment.negative}" class="negative">${utils.createSpan(row.sentiment.negative)}</div>
+                        </div>
+                    </td>
+                    <td class="${applyStatusClass(row.status)}">${row.status}</td>
+                    <td class="truncate" title="${row.callerId}">${row.callerId}</td>
+                `;
+            table.appendChild(tr);
+          });
+          borderRadiusAdjustment();
+          addTxtListeners();
+          audioRecordAdjustment();
+          setTbodyHeight();
+        }
+
+        // Event listeners for filtering and searching
+        document.getElementById('status-filter').addEventListener('change', filterAndUpdateTable);
+        document.getElementById('search').addEventListener('input', searchAndUpdateTable);
+        document.getElementById('overlay').addEventListener('click', () => {
+          document.getElementById('popup').style.display = 'none';
+          document.getElementById('overlay').style.display = 'none';
+        });
+        let processedData = [];
+        async function fetchDataAndUpdateTable() {
+          document.getElementById('overlay').style.display = 'block';
+          try {
+            const [callLogData, customerMap, resellerMap] = await Promise.all([
+              fetch("https://nodered.vncluster.infodation.com/api/getCallLog").then(res => res.json()),
+              fetchAndProcessCustomers("https://nodered.vncluster.infodation.com/api/getCustomer"),
+              fetchAndProcessCustomers("https://nodered.vncluster.infodation.com/api/getReseller")
+            ]);
+            processedData = callLogData.map(i => {
+              const sentiment = JSON.parse(i.sentiment);
+              return {
+                callerId: i.callerId ?? '',
+                callerNumber: i.callerNumber,
+                callerName: customerMap.get(i.callerNumber) ?? '',
+                calleeName: i.calleeName == '8:acs:3b020308-3c32-47cd-8ae6-4533874b94f6_00000020-0fbf-5408-02c3-593a0d000a7a' ? 'Admin Kikker' : resellerMap.get(i.calleeName?.substring(2) ?? '') ?? '',
+                startTime: utils.formatDate(i.startTime),
+                endTime: utils.formatDate(i.endTime),
+                duration: i.duration ?? '',
+                audioRecord: i.audioRecord,
+                transcription: i.transcription,
+                sentiment: {
+                  positive: parseFloat(sentiment?.Positive?.toFixed(2) ?? 0),
+                  neutral: parseFloat(sentiment?.Neutral?.toFixed(2) ?? 0),
+                  negative: parseFloat(sentiment?.Negative?.toFixed(2) ?? 0)
+                },
+                status: applyStatusClass2(i.status),
+              }
+            });
+            updateTable(processedData);
+          } catch (error) {
+            console.error('Error:', error);
+          }
+          finally {
+            document.getElementById('overlay').style.display = 'none';
+          }
+        }
+        function paginationInit() {
+          const prevButton = document.getElementById("prev-page");
+          const nextButton = document.getElementById("next-page");
+          const pageInfo = document.getElementById("pagination-info");
+          const gotoPageInput = document.getElementById("goto-page");
+
+          let currentPage = 1;
+          console.log(processedData.length);
+          let totalPages = Math.ceil(processedData.length / 8);
+
+          // Update the pagination info text
+          const updatePageInfo = () => {
+            pageInfo.textContent = `${currentPage}/${totalPages}`;
+            updateTable(processedData.slice((currentPage - 1) * 8, currentPage * 8));
+          };
+
+          const loadDataForPage = (page) => {
+            currentPage = page;
+            updatePageInfo();
+          };
+
+          // Previous page button click event
+          prevButton.addEventListener("click", () => {
+            if (currentPage > 1) {
+              loadDataForPage(currentPage - 1);
+            }
+          });
+
+          nextButton.addEventListener("click", () => {
+            if (currentPage < totalPages) {
+              loadDataForPage(currentPage + 1);
+            }
+          });
+
+          // Go to page input change event
+          gotoPageInput.addEventListener("change", () => {
+            const requestedPage = parseInt(gotoPageInput.value);
+            if (!isNaN(requestedPage) && requestedPage >= 1 && requestedPage <= totalPages) {
+              loadDataForPage(requestedPage);
+            } else {
+              gotoPageInput.value = currentPage; // Reset to current page if invalid
+            }
+          });
+          loadDataForPage(currentPage);
+        };
+
+        function filterAndUpdateTable() {
+          const statusFilter = document.getElementById('status-filter');
+          const status = statusFilter.value.toLowerCase();
+          const filteredData = processedData.filter(row => status === 'all' || row.status.toLowerCase() === status);
+          updateTable(filteredData);
+        }
+
+        function searchAndUpdateTable() {
+          const search = document.getElementById('search');
+          const keyword = search.value.toLowerCase();
+          let searchData;
+          if (keyword === "#") {
+            searchData = data.filter(row => row.callerName === '');
+          } else {
+            searchData = processedData.filter(row => {
+              return row.callerNumber.toLowerCase().includes(keyword) ||
+                row.callerName.toLowerCase().includes(keyword) ||
+                row.calleeName.toLowerCase().includes(keyword) ||
+                row.callerId.toLowerCase().includes(keyword);
+            });
+          }
+          updateTable(searchData);
+        }
+
+        await fetchDataAndUpdateTable();
+        paginationInit();
+      }
+
+      await updateUI();
+    })();
+  </script>
 </body>
 
 </html>
