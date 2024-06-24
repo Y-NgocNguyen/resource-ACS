@@ -1,5 +1,5 @@
-// IIFE to encapsulate the code
-(async function() {
+
+(async function () {
     const utils = {
         formatDate(startTime) {
             const date = new Date(startTime);
@@ -22,7 +22,7 @@
         }, new Map());
     }
 
-    async function  updateUI()  {
+    async function updateUI() {
         const statusMap = {
             'Answer': 'Answer', // 1
             'Miss call': 'MissCall', // 3
@@ -49,17 +49,15 @@
             let trs = tbody.getElementsByTagName("tr");
             let totalHeight = 0;
             let maxRows = 8;
-
             for (let i = 0; i < trs.length && i < maxRows; i++) {
                 totalHeight += trs[i].clientHeight;
             }
-
             tbody.style.height = totalHeight + "px";
         }
 
         function addTxtListeners() {
             document.querySelectorAll('.txtLink').forEach(link => {
-                link.addEventListener('click', function(e) {
+                link.addEventListener('click', function (e) {
                     e.preventDefault();
                     const data = this.getAttribute('data-content');
                     document.getElementById('popupContent').innerText = data === 'null' ? '' : data;
@@ -83,7 +81,7 @@
 
         function audioRecordAdjustment() {
             document.querySelectorAll('.myAudio').forEach(audioElement => {
-                audioElement.addEventListener('play', function() {
+                audioElement.addEventListener('play', function () {
                     this.style.width = '350%';
                     this.style.transform = 'translateX(-40%)';
                 });
@@ -135,13 +133,15 @@
         }
 
         // Event listeners for filtering and searching
-        document.getElementById('status-filter').addEventListener('change', filterAndUpdateTable);
-        document.getElementById('search').addEventListener('input', searchAndUpdateTable);
+        document.getElementById('status-filter').addEventListener('change', filterAndSearchTable);
+        document.getElementById('search').addEventListener('input', filterAndSearchTable);
         document.getElementById('overlay').addEventListener('click', () => {
             document.getElementById('popup').style.display = 'none';
             document.getElementById('overlay').style.display = 'none';
         });
         let processedData = [];
+
+        let maxRows = 8;
         async function fetchDataAndUpdateTable() {
             document.getElementById('overlay').style.display = 'block';
             try {
@@ -152,7 +152,7 @@
                 ]);
                 processedData = callLogData.map(i => {
                     const sentiment = JSON.parse(i.sentiment);
-                    return{
+                    return {
                         callerId: i.callerId ?? '',
                         callerNumber: i.callerNumber,
                         callerName: customerMap.get(i.callerNumber) ?? '',
@@ -170,28 +170,28 @@
                         status: applyStatusClass2(i.status),
                     }
                 });
-                updateTable(processedData);
+                paginationInit(processedData, true);
             } catch (error) {
                 console.error('Error:', error);
             }
-            finally{
+            finally {
                 document.getElementById('overlay').style.display = 'none';
             }
         }
-        function paginationInit() {
+        function paginationInit(data, init) {
+
             const prevButton = document.getElementById("prev-page");
             const nextButton = document.getElementById("next-page");
             const pageInfo = document.getElementById("pagination-info");
             const gotoPageInput = document.getElementById("goto-page");
 
             let currentPage = 1;
-            console.log(processedData.length);
-            let totalPages = Math.ceil(processedData.length / 8);
+            let totalPages = Math.ceil(data.length / maxRows);
 
             // Update the pagination info text
             const updatePageInfo = () => {
                 pageInfo.textContent = `${currentPage}/${totalPages}`;
-                updateTable(processedData.slice((currentPage - 1) * 8, currentPage * 8));
+                updateTable(data.slice((currentPage - 1) * maxRows, currentPage * maxRows));
             };
 
             const loadDataForPage = (page) => {
@@ -199,58 +199,50 @@
                 updatePageInfo();
             };
 
-            // Previous page button click event
-            prevButton.addEventListener("click", () => {
-                if (currentPage > 1) {
-                    loadDataForPage(currentPage - 1);
-                }
-            });
+            if (init) {
+                prevButton.addEventListener("click", () => {
+                    if (currentPage > 1) {
+                        loadDataForPage(currentPage - 1);
+                    }
+                });
 
-            nextButton.addEventListener("click", () => {
-                if (currentPage < totalPages) {
-                    loadDataForPage(currentPage + 1);
-                }
-            });
+                nextButton.addEventListener("click", () => {
+                    if (currentPage < totalPages) {
+                        loadDataForPage(currentPage + 1);
+                    }
+                });
 
-            // Go to page input change event
-            gotoPageInput.addEventListener("change", () => {
-                const requestedPage = parseInt(gotoPageInput.value);
-                if (!isNaN(requestedPage) && requestedPage >= 1 && requestedPage <= totalPages) {
-                    loadDataForPage(requestedPage);
-                } else {
-                    gotoPageInput.value = currentPage; // Reset to current page if invalid
-                }
-            });
-            loadDataForPage(currentPage);
-        };
-        
-        function filterAndUpdateTable() {
-            const statusFilter = document.getElementById('status-filter');
-            const status = statusFilter.value.toLowerCase();
-            const filteredData = processedData.filter(row => status === 'all' || row.status.toLowerCase() === status);
-            updateTable(filteredData);
-        }
-
-        function searchAndUpdateTable() {
-            const search = document.getElementById('search');
-            const keyword = search.value.toLowerCase();
-            let searchData;
-            if (keyword === "#") {
-                searchData = data.filter(row => row.callerName === '');
-            } else {
-                searchData = processedData.filter(row => {
-                    return row.callerNumber.toLowerCase().includes(keyword) ||
-                        row.callerName.toLowerCase().includes(keyword) ||
-                        row.calleeName.toLowerCase().includes(keyword) ||
-                        row.callerId.toLowerCase().includes(keyword);
+                // Go to page input change event
+                gotoPageInput.addEventListener("change", () => {
+                    const requestedPage = parseInt(gotoPageInput.value);
+                    if (!isNaN(requestedPage) && requestedPage >= 1 && requestedPage <= totalPages) {
+                        loadDataForPage(requestedPage);
+                    } else {
+                        gotoPageInput.value = currentPage; // Reset to current page if invalid
+                    }
                 });
             }
-            updateTable(searchData);
-        }
+            loadDataForPage(currentPage);
+        };
 
+        function filterAndSearchTable() {
+            const statusFilter = document.getElementById('status-filter');
+            const status = statusFilter.value.toLowerCase();
+            const search = document.getElementById('search');
+            const keyword = search.value.toLowerCase();
+
+            let dataTemp = processedData.filter(row => {
+                return row.callerNumber.toLowerCase().includes(keyword) ||
+                    row.callerName.toLowerCase().includes(keyword) ||
+                    row.calleeName.toLowerCase().includes(keyword) ||
+                    row.callerId.toLowerCase().includes(keyword);
+            });
+
+            dataTemp = dataTemp.filter(row => status === 'all' || row.status.toLowerCase() === status);
+            paginationInit(dataTemp);
+        }
         await fetchDataAndUpdateTable();
-        paginationInit();
     }
 
-   await updateUI();
+    await updateUI();
 })();
