@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Main</title>
+  <title>Call Log</title>
 </head>
 
 <body>
@@ -420,6 +420,14 @@
           return map;
         }, new Map());
       }
+      async function fetchAndProcessCallee(url) {
+        const response = await fetch(url);
+        const callee = await response.json();
+        return callee.reduce((map, item) => {
+            map.set(item.id, item.name);
+          return map;
+        }, new Map());
+      }
 
       async function updateUI() {
         const statusMap = {
@@ -546,18 +554,20 @@
         async function fetchDataAndUpdateTable() {
           document.getElementById('overlay').style.display = 'block';
           try {
-            const [callLogData, customerMap, resellerMap] = await Promise.all([
+            const [callLogData, customerMap, resellerMap, callee] = await Promise.all([
               fetch("https://nodered.vncluster.infodation.com/api/getCallLog").then(res => res.json()),
               fetchAndProcessCustomers("https://nodered.vncluster.infodation.com/api/getCustomer"),
-              fetchAndProcessCustomers("https://nodered.vncluster.infodation.com/api/getReseller")
+              fetchAndProcessCustomers("https://nodered.vncluster.infodation.com/api/getReseller"),
+              fetchAndProcessCallee("https://nodered.vncluster.infodation.com/api/getCallAgents")
             ]);
+            console.log(callLogData.map(e => e.calleeName));
             processedData = callLogData.map(i => {
               const sentiment = JSON.parse(i.sentiment);
               return {
                 callerId: i.callerId ?? '',
                 callerNumber: i.callerNumber,
                 callerName: customerMap.get(i.callerNumber) ?? '',
-                calleeName: i.calleeName == '8:acs:3b020308-3c32-47cd-8ae6-4533874b94f6_00000020-0fbf-5408-02c3-593a0d000a7a' ? 'Admin Kikker' : resellerMap.get(i.calleeName?.substring(2) ?? '') ?? '',
+                calleeName: i.calleeName?.startsWith("8:") ? callee.get(i.calleeName) : resellerMap.get(i.calleeName?.substring(2) ?? '') ?? '',
                 startTime: utils.formatDate(i.startTime),
                 endTime: i.endTime == null ? '' : utils.formatDate(i.endTime),
                 duration: i.duration ?? '',

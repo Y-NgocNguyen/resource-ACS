@@ -292,7 +292,10 @@
       .pagination span {
         margin: 0 10px;
       }
-
+      .priority{
+        display: flex;
+        justify-content: space-between;
+      }
       .pagination input[type="number"] {
         padding: 4px 10px;
         margin: 0 5px;
@@ -390,12 +393,43 @@
 
   </html>
   <script>
+    function editValue(editIcon) {
+      const td = editIcon.parentNode;
+      const currentValue = td.childNodes[0].nodeValue.trim();
+      td.innerHTML = `<input type="text" value="${currentValue}" />
+                    <div>
+                      <span class="confirm-icon" onclick="updateValue(this, '${td.id}')">✔️</span>
+                      <span class="cancel-icon" onclick="cancelEdit(this, '${currentValue}')">❌</span>
+                    </div>`;
+
+    }
+    function updateValue(confirmIcon, tdId) {
+      const td = confirmIcon.parentNode.parentNode;
+      const newValue = td.querySelector('input').value;
+      td.innerHTML = `${newValue} <span class="edit-icon" onclick="editValue(this)">✏️</span>`;
+      fetch("https://nodered.vncluster.infodation.com/api/updateCallAgentPriority", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: tdId.replace('r-', ''),
+          priority: newValue
+        })
+      }).catch(err => alert('Error:', err));
+    }
+      function cancelEdit(cancelIcon, originalValue) {
+      const td = cancelIcon.parentNode.parentNode;
+      td.innerHTML = `${originalValue} <span class="edit-icon" onclick="editValue(this)">✏️</span>`;
+  }
+
     (async function () {
       let maxRows = 8;
       let currentPage = 1;
       let totalPages;
       let processedData = [];
       const capitalizeFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1);
+      
       async function updateUI() {
         function setTbodyHeight() {
           let tbody = document.querySelector("tbody");
@@ -418,7 +452,10 @@
                     <td>${row.name}</td>
                     <td>${row.account}</td>
                     <td id="${row.id}" >${capitalizeFirstLetter(row.status)}</td>
-                    <td id="r-${row.id}" >${row.priority}</td>
+                    <td class="priority" id="r-${row.id}">
+                      ${row.priority}
+                      <span class="edit-icon" onclick="editValue(this)">✏️</span>
+                    </td>
                     <td>${row.id}</td>
                    
                 `;
@@ -548,7 +585,7 @@
                 if(data?.priority)
                 {
                   processedData.find(i => i.id === data.id).priority = data.priority;
-                  document.getElementById('r-'+data.id).textContent = data.priority;
+                  document.getElementById('r-'+data.id).innerHTML = data.priority + '<span class="edit-icon" onclick="editValue(this)">✏️</span>';
                 }
                
             };
