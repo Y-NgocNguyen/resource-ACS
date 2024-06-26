@@ -418,8 +418,8 @@
                     <td>${row.name}</td>
                     <td>${row.account}</td>
                     <td id="${row.id}" >${capitalizeFirstLetter(row.status)}</td>
-                    <td>${row.priority}</td>
-                    <td id="r-${row.id}" =>${row.id}</td>
+                    <td id="r-${row.id}" >${row.priority}</td>
+                    <td>${row.id}</td>
                    
                 `;
             table.appendChild(tr);
@@ -539,6 +539,7 @@
             ws.onmessage = function (event) {
                 console.log('Message from server:', event.data);
                 let data = JSON.parse(event.data);
+                console.log(data);
                 if(data?.status)
                 {
                   processedData.find(i => i.id === data.id).status = data.status;
