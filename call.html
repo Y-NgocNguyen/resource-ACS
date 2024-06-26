@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Call</title>
 </head>
 
 <body>
@@ -327,14 +327,14 @@
 
   <body>
     <div class="container">
-      <h1>CALL Agents</h1>
+      <h1>Call Agents</h1>
       <div class="filter">
         <div class="select">
           <label for="status-filter">Status</label>
           <select id="status-filter">
-            <option value="All">All</option>
-            <option value="Answer">Answer</option>
-            <option value="Miss call">Miss call</option>
+            <option value="On">On</option>
+            <option value="Off">Off</option>
+            <option value="Busy">Busy</option>
           </select>
         </div>
         <div class="search-container">
@@ -347,9 +347,10 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>Id</th>
+            <th>Account Name</th>
             <th>Status</th>
             <th>Priority</th>
+            <th>Id</th>
             <!-- <th>Token</th> -->
           </tr>
         </thead>
@@ -413,9 +414,10 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
                     <td>${row.name}</td>
-                    <td>${row.id}</td>
+                    <td>${row.account}</td>
                     <td id="${row.id}" >${row.status}</td>
                     <td>${row.priority}</td>
+                     <td>${row.id}</td>
                    
                 `;
             table.appendChild(tr);
@@ -439,7 +441,8 @@
                 "id" : i.id,
                 "status" : i.status,
                 "priority" : i.priority,
-                "token" : i.token
+                "token" : i.token,
+                "account" : i.account
               }
             });
            
