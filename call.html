@@ -539,7 +539,7 @@
             ws.onmessage = function (event) {
                 console.log('Message from server:', event.data);
                 let data = JSON.parse(event.data);
-                console.log(data);
+
                 if(data?.status)
                 {
                   processedData.find(i => i.id === data.id).status = data.status;
