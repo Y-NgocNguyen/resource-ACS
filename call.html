@@ -395,7 +395,7 @@
       let currentPage = 1;
       let totalPages;
       let processedData = [];
-
+      const capitalizeFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1);
       async function updateUI() {
         function setTbodyHeight() {
           let tbody = document.querySelector("tbody");
@@ -410,12 +410,14 @@
         function updateTable(filteredData) {
           const table = document.getElementById('content');
           table.innerHTML = '';
+         
           filteredData.forEach(row => {
+            
             const tr = document.createElement('tr');
             tr.innerHTML = `
                     <td>${row.name}</td>
                     <td>${row.account}</td>
-                    <td id="${row.id}" >${row.status}</td>
+                    <td id="${row.id}" >${capitalizeFirstLetter(row.status)}</td>
                     <td>${row.priority}</td>
                      <td>${row.id}</td>
                    
@@ -538,7 +540,7 @@
                 console.log('Message from server:', event.data);
                 let data = JSON.parse(event.data);
                 processedData.find(i => i.id === data.id).status = data.status;
-                document.getElementById(data.id).textContent = data.status;
+                document.getElementById(data.id).textContent =  capitalizeFirstLetter(data.status);
             };
 
         }
