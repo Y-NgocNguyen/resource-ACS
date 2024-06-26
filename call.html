@@ -419,7 +419,7 @@
                     <td>${row.account}</td>
                     <td id="${row.id}" >${capitalizeFirstLetter(row.status)}</td>
                     <td>${row.priority}</td>
-                     <td>${row.id}</td>
+                    <td id="r-${row.id}" =>${row.id}</td>
                    
                 `;
             table.appendChild(tr);
@@ -539,8 +539,17 @@
             ws.onmessage = function (event) {
                 console.log('Message from server:', event.data);
                 let data = JSON.parse(event.data);
-                processedData.find(i => i.id === data.id).status = data.status;
-                document.getElementById(data.id).textContent =  capitalizeFirstLetter(data.status);
+                if(data?.status)
+                {
+                  processedData.find(i => i.id === data.id).status = data.status;
+                  document.getElementById(data.id).textContent =  capitalizeFirstLetter(data.status);
+                }
+                if(data?.priority)
+                {
+                  processedData.find(i => i.id === data.id).priority = data.priority;
+                  document.getElementById('r-'+data.id).textContent = data.priority;
+                }
+               
             };
 
         }
