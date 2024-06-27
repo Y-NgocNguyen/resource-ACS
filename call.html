@@ -564,7 +564,7 @@
           totalPages = Math.ceil(data.length / maxRows);
           // Update the pagination info text
           const updatePageInfo = () => {
-            pageInfo.textContent = `${currentPage}/${totalPages}`;
+            pageInfo.textContent = `${currentPage}-${totalPages}`;
             updateTable(data.slice((currentPage - 1) * maxRows, currentPage * maxRows));
           };
 
