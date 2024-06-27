@@ -16,7 +16,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Call Log</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -295,7 +295,12 @@
       .priority{
         display: flex;
         justify-content: space-between;
+        gap: 5%;
       }
+      .edit-priority{
+        flex-grow: 1;
+      }
+      
       .pagination input[type="number"] {
         padding: 4px 10px;
         margin: 0 5px;
@@ -315,7 +320,7 @@
       #sum-record{
         font-style: italic;
       }
-
+    
       @keyframes spin {
         0% {
           transform: rotate(0deg);
@@ -324,6 +329,9 @@
         100% {
           transform: rotate(360deg);
         }
+      }
+      .edit-icon {
+        cursor: pointer;
       }
     </style>
   </head>
@@ -396,8 +404,8 @@
     function editValue(editIcon) {
       const td = editIcon.parentNode;
       const currentValue = td.childNodes[0].nodeValue.trim();
-      td.innerHTML = `<input type="text" value="${currentValue}" />
-                    <div>
+      td.innerHTML = `<input type="text" class ="edit-priority" value="${currentValue}" />
+                    <div class="optimal-priority" >
                       <span class="confirm-icon" onclick="updateValue(this, '${td.id}')">✔️</span>
                       <span class="cancel-icon" onclick="cancelEdit(this, '${currentValue}')">❌</span>
                     </div>`;
@@ -406,7 +414,7 @@
     function updateValue(confirmIcon, tdId) {
       const td = confirmIcon.parentNode.parentNode;
       const newValue = td.querySelector('input').value;
-      td.innerHTML = `${newValue} <span class="edit-icon" onclick="editValue(this)">✏️</span>`;
+      td.innerHTML = `${newValue} <span class="edit-icon"  onclick="editValue(this)"><i class="fa-solid fa-user-pen"></i></span>`;
       fetch("https://nodered.vncluster.infodation.com/api/updateCallAgentPriority", {
         method: 'POST',
         headers: {
@@ -420,7 +428,7 @@
     }
       function cancelEdit(cancelIcon, originalValue) {
       const td = cancelIcon.parentNode.parentNode;
-      td.innerHTML = `${originalValue} <span class="edit-icon" onclick="editValue(this)">✏️</span>`;
+      td.innerHTML = `${originalValue} <span class="edit-icon"  onclick="editValue(this)"><i class="fa-solid fa-user-pen"></i></span>`;
   }
 
     (async function () {
@@ -454,7 +462,7 @@
                     <td id="${row.id}" >${capitalizeFirstLetter(row.status)}</td>
                     <td class="priority" id="r-${row.id}">
                       ${row.priority}
-                      <span class="edit-icon" onclick="editValue(this)">✏️</span>
+                      <span class="edit-icon"  onclick="editValue(this)"><i class="fa-solid fa-user-pen"></i></span>
                     </td>
                     <td>${row.id}</td>
                    
@@ -585,7 +593,7 @@
                 if(data?.priority)
                 {
                   processedData.find(i => i.id === data.id).priority = data.priority;
-                  document.getElementById('r-'+data.id).innerHTML = data.priority + '<span class="edit-icon" onclick="editValue(this)">✏️</span>';
+                  document.getElementById('r-'+data.id).innerHTML = data.priority + '<span class="edit-icon"  onclick="editValue(this)"><i class="fa-solid fa-user-pen"></i></span>';
                 }
                
             };
