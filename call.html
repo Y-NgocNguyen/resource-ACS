@@ -406,15 +406,15 @@
       const currentValue = td.childNodes[0].nodeValue.trim();
       td.innerHTML = `<input type="text" class ="edit-priority" value="${currentValue}" />
                     <div class="optimal-priority" >
-                      <span class="confirm-icon" onclick="updateValue(this, '${td.id}')">✔️</span>
-                      <span class="cancel-icon" onclick="cancelEdit(this, '${currentValue}')">❌</span>
+                      <span class="confirm-icon" style="font-size:1.4rem" onclick="updateValue(this, '${td.id}')"><i class="fa-solid fa-check"></i></span>
+                      <span class="cancel-icon" style="font-size:1.4rem" onclick="cancelEdit(this, '${currentValue}')"><i class="fa-solid fa-xmark"></i></span>
                     </div>`;
 
     }
     function updateValue(confirmIcon, tdId) {
       const td = confirmIcon.parentNode.parentNode;
       const newValue = td.querySelector('input').value;
-      td.innerHTML = `${newValue} <span class="edit-icon"  onclick="editValue(this)"><i class="fa-solid fa-user-pen"></i></span>`;
+      td.innerHTML = `${newValue} <span class="edit-icon" style="font-size:1.2rem"  onclick="editValue(this)"><i class="fa-solid fa-user-pen"></i></span>`;
       fetch("https://nodered.vncluster.infodation.com/api/updateCallAgentPriority", {
         method: 'POST',
         headers: {
@@ -428,7 +428,7 @@
     }
       function cancelEdit(cancelIcon, originalValue) {
       const td = cancelIcon.parentNode.parentNode;
-      td.innerHTML = `${originalValue} <span class="edit-icon"  onclick="editValue(this)"><i class="fa-solid fa-user-pen"></i></span>`;
+      td.innerHTML = `${originalValue} <span class="edit-icon" style="font-size:1.2rem"  onclick="editValue(this)"><i class="fa-solid fa-user-pen"></i></span>`;
   }
 
     (async function () {
@@ -462,7 +462,7 @@
                     <td id="${row.id}" >${capitalizeFirstLetter(row.status)}</td>
                     <td class="priority" id="r-${row.id}">
                       ${row.priority}
-                      <span class="edit-icon"  onclick="editValue(this)"><i class="fa-solid fa-user-pen"></i></span>
+                      <span class="edit-icon" style="font-size:1.2rem"  onclick="editValue(this)"><i class="fa-solid fa-user-pen"></i></span>
                     </td>
                     <td>${row.id}</td>
                    
@@ -593,7 +593,7 @@
                 if(data?.priority)
                 {
                   processedData.find(i => i.id === data.id).priority = data.priority;
-                  document.getElementById('r-'+data.id).innerHTML = data.priority + '<span class="edit-icon"  onclick="editValue(this)"><i class="fa-solid fa-user-pen"></i></span>';
+                  document.getElementById('r-'+data.id).innerHTML = data.priority + '<span class="edit-icon" style="font-size:1.2rem"  onclick="editValue(this)"><i class="fa-solid fa-user-pen"></i></span>';
                 }
                
             };
