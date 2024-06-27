@@ -639,7 +639,12 @@
                 if(data?.status)  
                 {
                   processedData.find(i => i.id === data.id).status = data.status;
-                  Array.from(document.getElementById(data.id).childNodes).find(i => i.tagName === 'DIV').className = data.status;
+                  let child = Array.from(document.getElementById(data.id).childNodes).find(i => i.tagName === 'DIV');
+                  console.log(child);
+                  child.innerHTML = statusMap[data.status];
+                  let div = document.createElement('div');
+                  div.className = data.status;
+                  child.insertBefore(div, child.firstChild);
                 }
                 if(data?.priority)
                 {
