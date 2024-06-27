@@ -400,6 +400,7 @@
     (async function () {
       let maxRows = 8;
       let currentPage = 1;
+      let tempData = [];
       let totalPages;
       const utils = {
         formatDate(startTime) {
@@ -590,8 +591,8 @@
                 status: applyStatusClass2(i.status),
               }
             });
-           
-            paginationInit(processedData,true);
+           tempData = [...processedData];
+            paginationInit(true);
           } catch (error) {
             console.error('Error:', error);
           }
@@ -599,9 +600,9 @@
             document.getElementById('overlay').style.display = 'none';
           }
         }
-        function paginationInit(data,init) {
-          console.log(data);
-          document.getElementById('sum-record').textContent = `Total records: ${data.length}`;
+        function paginationInit(init) {
+          console.log(tempData);
+          document.getElementById('sum-record').textContent = `Total records: ${tempData.length}`;
           var container = document.getElementsByClassName("container");
           if (container[0].clientHeight < 640) {
             maxRows = 4;
@@ -611,11 +612,11 @@
           const pageInfo = document.getElementById("pagination-info");
           const gotoPageInput = document.getElementById("goto-page");
 
-          totalPages = Math.ceil(data.length / maxRows);
+          totalPages = Math.ceil(tempData.length / maxRows);
           // Update the pagination info text
           const updatePageInfo = () => {
             pageInfo.textContent = `${currentPage}/${totalPages}`;
-            updateTable(data.slice((currentPage - 1) * maxRows, currentPage * maxRows));
+            updateTable(tempData.slice((currentPage - 1) * maxRows, currentPage * maxRows));
           };
 
           const loadDataForPage = (page) => {
@@ -669,15 +670,15 @@
           console.log(status);
           const search = document.getElementById('search');
           const keyword = search.value.toLowerCase();
-          let dataTemp = processedData.filter(row => {
+          tempData = processedData.filter(row => {
               return row.callerNumber.toLowerCase().includes(keyword) ||
                 row.callerName.toLowerCase().includes(keyword) ||
                 row.calleeName.toLowerCase().includes(keyword) ||
                 row.callerId.toLowerCase().includes(keyword);
             });
     
-          dataTemp = dataTemp.filter(row => status === 'all' || row.status.toLowerCase() === status);
-          paginationInit(dataTemp);
+          tempData = tempData.filter(row => status === 'all' || row.status.toLowerCase() === status);
+          paginationInit();
         }
         await fetchDataAndUpdateTable();
         
