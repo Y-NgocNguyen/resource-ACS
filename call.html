@@ -269,7 +269,8 @@
 
       .pagination {
         display: flex;
-        justify-content: center;
+        margin-right: 10px;
+        justify-content: end;
         align-items: center;
         margin-top: 20px;
       }
@@ -277,8 +278,9 @@
       .pagination button {
         padding: 5px 10px;
         margin: 0 5px;
-        background-color: #007bff;
-        color: white;
+        border: none;
+        background-color: #ffffff;
+        color: #1a1a1a;
         border: none;
         border-radius: 5px;
         cursor: pointer;
@@ -319,6 +321,7 @@
       }
       #sum-record{
         font-style: italic;
+        color: #9cc2e6;
       }
     
       @keyframes spin {
@@ -359,6 +362,17 @@
       width: 12px;
       height: 12px;
     }
+    .status-wap{
+      display: flex;
+     justify-content: start;
+     align-items: center;
+    }
+    .status-wap div{
+      margin-right: 10px;
+    }
+    #prev-page{
+      transform: rotate(180deg);
+    }
     </style>
   </head>
 
@@ -394,11 +408,11 @@
         </tbody>
       </table>
       <div class="pagination">
-        <button id="prev-page">Prev</button>
+        <button id="prev-page"><i class="fa-solid fa-chevron-right"></i></button>
         <input type="number" id="goto-page" placeholder="Go to page..." min="1" style="margin: 0 10px; width: 80px;">
         <span id="pagination-info">1/1</span>
         <span id="sum-record"></span>
-        <button id="next-page">Next</button>
+        <button id="next-page"><i class="fa-solid fa-chevron-right"></i></button>
       </div>
 
     </div>
@@ -461,8 +475,14 @@
       let currentPage = 1;
       let totalPages;
       let processedData = [];
+
+      const statusMap =  {
+        "on": "Online",
+        "off": "Offline",
+        "busy": "Busy",
+        "be-right-back": "Be Right Back",
+      }  
       const capitalizeFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1);
-      
       async function updateUI() {
         function setTbodyHeight() {
           let tbody = document.querySelector("tbody");
@@ -484,8 +504,11 @@
             tr.innerHTML = `
                     <td>${row.name}</td>
                     <td>${row.account}</td>
-                    <td id="${row.id}"  >
-                      <div class="${row.status}">
+                    <td id="${row.id}" >
+                      <div class="status-wap">
+                        <div class="${row.status}">
+                        </div>
+                        ${statusMap[row.status] ?? ''}
                       </div>
                     </td>
                     <td class="priority" id="r-${row.id}">
@@ -529,7 +552,7 @@
           }
         }
         function paginationInit(data,init) {
-          document.getElementById('sum-record').textContent = `Total records: ${data.length}`;
+          document.getElementById('sum-record').textContent = `Total ${data.length}`;
           var container = document.getElementsByClassName("container");
           if (container[0].clientHeight < 640) {
             maxRows = 4;
@@ -612,7 +635,7 @@
                 console.log('Message from server:', event.data);
                 let data = JSON.parse(event.data);
 
-                if(data?.status)
+                if(data?.status)  
                 {
                   processedData.find(i => i.id === data.id).status = data.status;
                   Array.from(document.getElementById(data.id).childNodes).find(i => i.tagName === 'DIV').className = data.status;
