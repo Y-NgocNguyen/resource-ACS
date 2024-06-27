@@ -333,6 +333,32 @@
       .edit-icon {
         cursor: pointer;
       }
+
+      .on {
+      background-image: radial-gradient(circle, #b4e800 0%, #63ad6e 100%);
+      border-radius: 50%; 
+      width: 12px; 
+      border: none;
+      height: 12px; 
+    }
+    .off {
+      background-image: radial-gradient(circle, #9ca4b1 0%, #7d8a9e 100%); 
+      border-radius: 50%; 
+      width: 12px; 
+      height: 12px;
+    }
+    .busy {
+      background-image: radial-gradient(circle, #f0675c 0%, #f01616 100%);
+      border-radius: 50%;
+      width: 12px;
+      height: 12px;
+    }
+    .be-right-back {
+      background-image: radial-gradient(circle, #f0c908 0%, #baaa4f 100%);
+      border-radius: 50%;
+      width: 12px;
+      height: 12px;
+    }
     </style>
   </head>
 
@@ -457,7 +483,10 @@
             tr.innerHTML = `
                     <td>${row.name}</td>
                     <td>${row.account}</td>
-                    <td id="${row.id}" >${capitalizeFirstLetter(row.status)}</td>
+                    <td id="${row.id}"  >
+                      <div class="${row.status}">
+                      </div>
+                    </td>
                     <td class="priority" id="r-${row.id}">
                       ${row.priority}
                       <span class="edit-icon" style="font-size:1.2rem"  onclick="editValue(this)"><i class="fa-solid fa-user-pen"></i></span>
@@ -585,7 +614,7 @@
                 if(data?.status)
                 {
                   processedData.find(i => i.id === data.id).status = data.status;
-                  document.getElementById(data.id).textContent =  capitalizeFirstLetter(data.status);
+                  Array.from(document.getElementById(data.id).childNodes).find(i => i.tagName === 'DIV').className = data.status;
                 }
                 if(data?.priority)
                 {
