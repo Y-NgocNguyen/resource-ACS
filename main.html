@@ -335,6 +335,8 @@
             <option value="All">All</option>
             <option value="Answer">Answer</option>
             <option value="Miss call">Miss call</option>
+            <option value="Busy">Busy</option>
+            <option value="Multi Answer">Multi Answer</option>
           </select>
         </div>
         <div class="search-container">
@@ -431,16 +433,19 @@
 
       async function updateUI() {
         const statusMap = {
-          'Answer': 'Answer', // 1
-          'Miss call': 'MissCall', // 3
-          'Caller Hangup': 'CallHp',  // 2
-          'other': "other"//0
+          'Answer': 'Answer', 
+          'Multi Answer': 'Multi-Answer',
+          'Busy': 'Busy', 
+          'Miss call': 'MissCall', 
+          'Caller Hangup': 'CallHp',  //2
+          'other': "other"
         };
         const statusMap2 = {
           0: 'Miss call',
           1: 'Answer',
           2: 'Miss call',
-          3: 'Miss call',
+          3: 'Multi Answer',
+          4: 'Busy',
         };
         function applyStatusClass(status) {
           const statusClass = statusMap[status] || 'MissCall';
@@ -525,9 +530,13 @@
                     </td>
                     <td>
                         <div class="sentiment-bar">
-                            <div style="--i:${row.sentiment.positive}" class="positive">${utils.createSpan(row.sentiment.positive)}</div>
+                          ${row.status == 'Miss call' 
+                          ? '' 
+                          : `<div style="--i:${row.sentiment.positive}" class="positive">${utils.createSpan(row.sentiment.positive)}</div>
                             <div style="--i:${row.sentiment.neutral}" class="neutral">${utils.createSpan(row.sentiment.neutral)}</div>
-                            <div style="--i:${row.sentiment.negative}" class="negative">${utils.createSpan(row.sentiment.negative)}</div>
+                            <div style="--i:${row.sentiment.negative}" class="negative">${utils.createSpan(row.sentiment.negative)}</div>`
+                          }
+
                         </div>
                     </td>
                     <td class="${applyStatusClass(row.status)}">${row.status}</td>
@@ -591,6 +600,7 @@
           }
         }
         function paginationInit(data,init) {
+          console.log(data);
           document.getElementById('sum-record').textContent = `Total records: ${data.length}`;
           var container = document.getElementsByClassName("container");
           if (container[0].clientHeight < 640) {
@@ -600,6 +610,7 @@
           const nextButton = document.getElementById("next-page");
           const pageInfo = document.getElementById("pagination-info");
           const gotoPageInput = document.getElementById("goto-page");
+
           totalPages = Math.ceil(data.length / maxRows);
           // Update the pagination info text
           const updatePageInfo = () => {
@@ -655,16 +666,16 @@
           currentPage = 1;
           const statusFilter = document.getElementById('status-filter');
           const status = statusFilter.value.toLowerCase();
+          console.log(status);
           const search = document.getElementById('search');
           const keyword = search.value.toLowerCase();
-
           let dataTemp = processedData.filter(row => {
               return row.callerNumber.toLowerCase().includes(keyword) ||
                 row.callerName.toLowerCase().includes(keyword) ||
                 row.calleeName.toLowerCase().includes(keyword) ||
                 row.callerId.toLowerCase().includes(keyword);
             });
-        
+    
           dataTemp = dataTemp.filter(row => status === 'all' || row.status.toLowerCase() === status);
           paginationInit(dataTemp);
         }
